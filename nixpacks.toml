@@ -1,0 +1,13 @@
+# Railway: instalar Python + weasyprint junto a Node
+[phases.setup]
+nixPkgs = ["nodejs", "python312", "python312Packages.pip"]
+aptPkgs = ["libpango-1.0-0", "libpangocairo-1.0-0", "libgdk-pixbuf2.0-0", "libcairo2", "libffi-dev", "fonts-dejavu", "fonts-crosextra-carlito"]
+
+[phases.python]
+cmds = ["pip install --break-system-packages weasyprint"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[start]
+cmd = "node server.js"
