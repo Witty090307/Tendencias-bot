@@ -60,7 +60,7 @@ async function analizarNicho(nicho, candidatos, apiKey) {
   }
 
   // recortar a lo esencial para no gastar tokens de más
-  const candidatosLimpios = candidatos.slice(0, 18).map((c, i) => ({
+  const candidatosLimpios = candidatos.slice(0, 15).map((c, i) => ({
     n: i + 1,
     plataforma: c.plataforma,
     titulo: c.titulo,
