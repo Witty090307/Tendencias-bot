@@ -1,0 +1,15 @@
+# Railway con Node + Python (para weasyprint).
+# Forzamos que python3 quede en el PATH y weasyprint se instale.
+providers = ["node", "python"]
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "python311", "python311Packages.pip", "python311Packages.setuptools", "pango", "cairo", "gdk-pixbuf", "libffi", "harfbuzz", "fontconfig", "freetype", "dejavu_fonts"]
+
+[phases.install]
+cmds = [
+  "npm install",
+  "python3 -m pip install --break-system-packages weasyprint"
+]
+
+[start]
+cmd = "node server.js"

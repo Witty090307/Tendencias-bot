@@ -1,0 +1,58 @@
+{
+  "name": "BOT TENDENCIAS MENSUAL",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 8 20 * *" } ] }
+      },
+      "id": "cron",
+      "name": "1. Cron (día 20, 8am)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://TU-SERVICIO.up.railway.app/generar",
+        "options": { "timeout": 900000 },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}"
+      },
+      "id": "llamar",
+      "name": "2. Correr bot de tendencias",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma el mensaje de Telegram con el resumen\nconst d = $json;\nlet msg = '';\nif (d.ok) {\n  const r = d.resumen || {};\n  msg += '\\ud83d\\udcc8 *TENDENCIAS DE CONTENIDO — ' + (r.mes||'') + ' ' + (r.anio||'') + '*\\n\\n';\n  msg += '\\u2705 Documento generado y subido a Drive\\n';\n  msg += '\\ud83d\\udcca ' + (r.totalTend||0) + ' tendencias en ' + (r.nichosConTend||0) + '/12 nichos\\n\\n';\n  if (r.top5 && r.top5.length) {\n    msg += '\\u2b50 *Top 5 del mes:*\\n';\n    r.top5.forEach((t,i)=>{ msg += (i+1)+'. '+t.titulo+' _('+t.nicho+')_\\n'; });\n    msg += '\\n';\n  }\n  if (d.driveLink) msg += '\\ud83d\\udcc4 '+d.driveLink;\n  else msg += '\\u26a0\\ufe0f El PDF se gener\\u00f3 pero no se subi\\u00f3 a Drive (revisa credenciales)';\n} else {\n  msg = '\\u274c Error generando tendencias: ' + (d.error || 'desconocido');\n}\nconst CHATS = ['8100366018'];\nreturn CHATS.map(chatId => ({ json: { chatId, mensaje: msg } }));"
+      },
+      "id": "mensaje",
+      "name": "3. Arma el mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "telegram",
+      "name": "4. Avisa por Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "1. Cron (día 20, 8am)": { "main": [[{ "node": "2. Correr bot de tendencias", "type": "main", "index": 0 }]] },
+    "2. Correr bot de tendencias": { "main": [[{ "node": "3. Arma el mensaje", "type": "main", "index": 0 }]] },
+    "3. Arma el mensaje": { "main": [[{ "node": "4. Avisa por Telegram", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Hermosillo" }
+}
