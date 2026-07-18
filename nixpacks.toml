@@ -1,0 +1,5 @@
+# Solo Node (el PDF ahora es Node puro con pdfkit, sin Python)
+providers = ["node"]
+
+[start]
+cmd = "node server.js"
