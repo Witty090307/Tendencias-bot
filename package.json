@@ -1,0 +1,14 @@
+{
+  "name": "tendencias-bot-escalando",
+  "version": "1.0.0",
+  "description": "Bot mensual de tendencias de contenido para Escalando Marketing Digital",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "pdfkit": "^0.15.2"
+  }
+}
