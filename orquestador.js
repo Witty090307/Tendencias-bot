@@ -58,8 +58,16 @@ async function correrPipeline(cfg, onProgress = () => {}) {
     top5, nichos: nichosAnalizados,
   };
 
-  onProgress('Generando PDF...');
+  // RED DE SEGURIDAD: guardar el análisis en disco ANTES del PDF.
+  // Si el PDF falla, el análisis NO se pierde.
   const nombreArchivo = `Tendencias_${mes}_${anio}.pdf`;
+  const jsonPath = path.join('/tmp', `Tendencias_${mes}_${anio}.json`);
+  try {
+    fs.writeFileSync(jsonPath, JSON.stringify(datos, null, 2), 'utf-8');
+    console.log('[backup] análisis guardado en', jsonPath);
+  } catch (e) { console.error('[backup] no se pudo guardar:', e.message); }
+
+  onProgress('Generando PDF...');
   const pdfPath = path.join('/tmp', nombreArchivo);
   await generarPDF(datos, pdfPath);
 
